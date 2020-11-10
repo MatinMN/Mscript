@@ -14,5 +14,5 @@ while True:
     parse = Parser(tokens)
     ast = parse.parse()
 
-    print(ast)
+    print(ast.node,ast.error)
     
