@@ -1,13 +1,4 @@
-TT_FLOAT  = 'TT_FLOAT'
-TT_INT    = 'TT_INT'
-TT_PLUS   = 'TT_PLUS'
-TT_MINUS  = 'TT_MINUS'
-TT_MUL    = 'TT_MUL'
-TT_DIV    = 'TT_DIV'
-TT_LPAREN = 'TT_LPAREN'
-TT_RPAREN = 'TT_RPAREN'
-
-DIGITS = '0123456789'
+import constents
 
 class Error :
     def __init__(self, error_name, details, pos_start, pos_end):
@@ -77,25 +68,25 @@ class Lexer:
         while self.current_char != None:
             if self.current_char in ' \t':
                 self.advance()
-            elif self.current_char in DIGITS:
+            elif self.current_char in constents.DIGITS:
                 tokens.append(self.make_number())
             elif self.current_char == '+':
-                tokens.append(Token(TT_PLUS))
+                tokens.append(Token(constents.TT_PLUS))
                 self.advance()
             elif self.current_char == '-':
-                tokens.append(Token(TT_MINUS))
+                tokens.append(Token(constents.TT_MINUS))
                 self.advance()
             elif self.current_char == '*':
-                tokens.append(Token(TT_MUL))
+                tokens.append(Token(constents.TT_MUL))
                 self.advance()
             elif self.current_char == '/':
-                tokens.append(Token(TT_DIV))
+                tokens.append(Token(constents.TT_DIV))
                 self.advance()
             elif self.current_char == '(':
-                tokens.append(Token(TT_LPAREN))
+                tokens.append(Token(constents.TT_LPAREN))
                 self.advance()
             elif self.current_char == ')':
-                tokens.append(Token(TT_RPAREN))
+                tokens.append(Token(constents.TT_RPAREN))
                 self.advance()
             else:
                 pos_start = self.pos.copy()
@@ -111,7 +102,7 @@ class Lexer:
         num_str = ''
         dot_count = 0
 
-        while self.current_char != None and self.current_char in DIGITS + '.':
+        while self.current_char != None and self.current_char in constents.DIGITS + '.':
             if self.current_char == '.':
                 if dot_count ==  1:
                     break
@@ -122,9 +113,9 @@ class Lexer:
             self.advance()
 
         if dot_count == 0:
-            return Token(TT_INT,int(num_str))
+            return Token(constents.TT_INT,int(num_str))
         else :
-            return Token(TT_FLOAT, float(num_str))
+            return Token(constents.TT_FLOAT, float(num_str))
 
 
 def run(file_name, text):

@@ -1,4 +1,5 @@
 import lexer
+import constents
 
 class NumberNode:
     def __init__(self, token):
@@ -36,15 +37,15 @@ class Parser:
     def factor(self):
         token = self.current_token
 
-        if token.type in (lexer.TT_FLOAT,lexer.TT_INT):
+        if token.type in (constents.TT_FLOAT,constents.TT_INT):
             self.advance()
             return NumberNode(token)
 
     def term(self):
-        return self.bin_op(self.factor,(lexer.TT_MUL,lexer.TT_DIV))
+        return self.bin_op(self.factor,(constents.TT_MUL,constents.TT_DIV))
 
     def expr(self):
-        return self.bin_op(self.term,(lexer.TT_PLUS,lexer.TT_MINUS))
+        return self.bin_op(self.term,(constents.TT_PLUS,constents.TT_MINUS))
         
 
     def bin_op(self, func , ops):
