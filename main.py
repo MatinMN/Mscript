@@ -1,6 +1,6 @@
 import lexer
 from parser import Parser
-
+from interpreter import Interpreter
 while True:
     text = input("Mscript :>>> ")
 
@@ -14,5 +14,11 @@ while True:
     parse = Parser(tokens)
     ast = parse.parse()
 
-    print(ast.node,ast.error)
+    interpreter = Interpreter()
+    result = interpreter.visit(ast.node)
+
+
+    print(result)
+
+    
     
