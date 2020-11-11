@@ -8,6 +8,9 @@ class Error :
 
     def as_string(self):
         return f'{self.error_name}: {self.details}' + f'File {self.pos_start.file}, line {self.pos_start.ln + 1}'
+        
+    def __repr__(self):
+        return f'{self.error_name}: {self.details}' + f'File {self.pos_start.file}, line {self.pos_start.ln + 1}'
 
 class IllegalCharError(Error):
     def __init__(self, details, pos_start, pos_end):
@@ -16,3 +19,7 @@ class IllegalCharError(Error):
 class InvalidSyntaxError(Error):
     def __init__(self, details, pos_start, pos_end):
         super().__init__("Invalid Syntax" ,details, pos_start, pos_end)
+
+class RunTimeError(Error):
+    def __init__(self, details, pos_start, pos_end):
+        super().__init__("Runtime Error" ,details, pos_start, pos_end)

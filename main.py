@@ -18,7 +18,7 @@ while True:
     result = interpreter.visit(ast.node)
 
 
-    print(result)
+    print(result.value, result.error)
 
     
     

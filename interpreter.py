@@ -1,4 +1,24 @@
 import constents
+import errors
+
+class RunTimeResult:
+    def __init__(self):
+        self.value = None
+        self.error = None
+
+
+    def register(self, res):
+        if res.error : self.error = res.error
+        return res.value
+    
+    def success(self, value):
+        self.value = value 
+        return self
+
+    def failure(self, error):
+        self.error = error
+        return self
+
 
 class Number:
     def __init__(self, value):
@@ -11,18 +31,20 @@ class Number:
     
     def added_to(self, other):
         if isinstance(other, Number):
-            return Number(self.value + other.value)
+            return Number(self.value + other.value), None
     
     def subbed_by(self, other):
         if isinstance(other, Number):
-            return Number(self.value - other.value)
+            return Number(self.value - other.value), None
     
     def multed_by(self, other):
         if isinstance(other, Number):
-            return Number(self.value * other.value)
+            return Number(self.value * other.value), None
 
     def dived_by(self, other):
         if isinstance(other, Number):
+            if other.value == 0:
+                return None, errors.RunTimeError('Invalid operation Division by zero', other.pos_start, other.pos_end)
             return Number(self.value / other.value)
 
     def __repr__(self):
@@ -45,27 +67,43 @@ class Interpreter:
 
     
     def visit_NumberNode(self, node):
-        return Number(node.token.value).set_pos(node.pos_start, node.pos_end)
+        return RunTimeResult().success(
+            Number(node.token.value).set_pos(node.pos_start, node.pos_end)
+        )
 
     def visit_BinOpNode(self, node):
-        left = self.visit(node.left_node)
-        right = self.visit(node.right_node)
+        res = RunTimeResult()
+        left = res.register(self.visit(node.left_node))
+        right = res.register(self.visit(node.right_node))
+
+        if res.error : return res
+
+        error = None
 
         if node.op_token.type == constents.TT_PLUS:
-            results = left.added_to(right)
+            results,error  = left.added_to(right)
         elif node.op_token.type == constents.TT_MINUS:
-            results = left.subbed_by(right)
+            results,error = left.subbed_by(right)
         elif node.op_token.type == constents.TT_MUL:
-            results = left.multed_by(right)
+            results,error = left.multed_by(right)
         elif node.op_token.type == constents.TT_DIV:
-            results = left.dived_by(right)
+            results,error  = left.dived_by(right)
         
-        return results.set_pos(node.pos_start, node.pos_end)
+        if error:
+            return res.failure(error)
+        
+        return res.success(results.set_pos(node.pos_start, node.pos_end))
 
     def visit_UnararyOpNode(self, node):
-        number = self.visit(node.node)
+        res = RunTimeResult()
+        number = res.register(self.visit(node.node))
 
+        if res.error : return res
+
+        error = None
         if node.op_token.type == constents.TT_MINUS:
-            number = number.multed_by(Number(-1))
-        
-        return number.set_pos(node.pos_start, node.pos_end)
+            number,error  = number.multed_by(Number(-1))
+
+        if error : return res.failure(error)
+
+        return res.success(number.set_pos(node.pos_start, node.pos_end))
