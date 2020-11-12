@@ -1,6 +1,7 @@
 import lexer
 from parser import Parser
 from interpreter import Interpreter
+from context import Context
 while True:
     text = input("Mscript :>>> ")
 
@@ -15,7 +16,8 @@ while True:
     ast = parse.parse()
 
     interpreter = Interpreter()
-    result = interpreter.visit(ast.node)
+    root_ctx = Context('<main>')
+    result = interpreter.visit(ast.node,root_ctx)
 
 
     print(result.value, result.error)
