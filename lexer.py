@@ -67,6 +67,11 @@ class Lexer:
                 self.advance()
             elif self.current_char in constents.DIGITS:
                 tokens.append(self.make_number())
+            elif self.current_char in constents.LETTERS:
+                tokens.append(self.make_identifier())
+            elif self.current_char == '=':
+                tokens.append(Token(constents.TT_EQ, pos_start = self.pos))
+                self.advance()    
             elif self.current_char == '+':
                 tokens.append(Token(constents.TT_PLUS, pos_start = self.pos))
                 self.advance()
@@ -115,6 +120,17 @@ class Lexer:
         else :
             return Token(constents.TT_FLOAT, float(num_str),pos_start,self.pos)
 
+    def make_identifier(self):
+        id_str = ''
+        pos_start = self.pos.copy()
+
+        while self.current_char != None and self.current_char in constents.LETTERS_DIGITS + "_":
+            id_str += self.current_char
+            self.advance()
+
+        token_type = constents.TT_KEYWORD if id_str in constents.KEYWORDS else constents.TT_IDENTIFIER
+        
+        return Token(tok_type, id_strpos_start,self.pos)
 
 def run(file_name, text):
     lexer = Lexer(file_name, text)
